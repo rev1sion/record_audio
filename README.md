@@ -1,5 +1,9 @@
 # record_audio
-Create Python app for recording and playing audio simultaneously
+Для работы нужна библиотека PyAudio. Проблема для Windiws для установки через wheels нужен пакет сборки c++. 
+Можно использовать https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio без пакета с++
+Для линукс согласно документации http://people.csail.mit.edu/hubert/pyaudio/
+
+**Create Python app for recording and playing audio simultaneously
 
 - забирать звук из микрофона, увеличивать силу звука (громкость) в 2 раза 
 - записывать его в файл и одновременно (в процессе записи) воспроизводить 
