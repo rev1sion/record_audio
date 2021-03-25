@@ -1,0 +1,11 @@
+{
+  "audio": {
+    "input_device_index": 1,
+    "output_device_index": 3,
+    "rate": 44100,
+    "audio_format": "paInt16",
+    "min_seconds": 5,
+    "max_seconds": 10,
+    "volume": 10
+  }
+}

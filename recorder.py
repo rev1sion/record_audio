@@ -1,4 +1,5 @@
 import argparse
+import json
 import sys
 import threading
 
@@ -18,62 +19,50 @@ def arg_parser():
     return parser
 
 
-def record_audio(event, audio):
+def record_audio(audio):
+    """
+    Record audio
+    :param audio: instance Audio
+    :return: None
+    """
     print("* recording\n")
-    data = audio.record()
+    audio.record()
     print("* stop recording")
-    # audio.write_to_file(data)
     audio.stop_recording()
 
-    # while not event.wait(1):
-    #     data += audio.record()
-    #     print(event.wait(1))
-    #     print('wait')
-    # audio.stop_recording()
-    # print("* stop recording")
-    # audio.write_to_file(data)
 
-
-def stop_handler(event, a):
+def stop_handler(a):
     """
     Stop recording audio from console
 
-    :param event: threading event
     :param a: instance Audio
     :return: None
     """
     command = input('Введите stop, чтобы остановить запись\n')
     if command == 'stop':
         a.stop_recording()
-        # print("* stop recording")
 
 
 def main(path):
-    a = Audio(filename=path)
+    settings = json.load(open('settings.json'))
+    a = Audio(
+        filename=path,
+        input_device_index=settings['audio']['input_device_index'],
+        output_device_index=settings['audio']['output_device_index'],
+        rate=settings['audio']['rate'],
+        audio_format=settings['audio']['audio_format'],
+        min_seconds=settings['audio']['min_seconds'],
+        max_seconds=settings['audio']['max_seconds'],
+        volume=settings['audio']['volume']
+    )
 
-    thread_event = threading.Event()
-    record_thread = threading.Thread(target=record_audio, args=(thread_event, a), daemon=True)
+    record_thread = threading.Thread(target=record_audio, args=(a,), daemon=True)
     record_thread.start()
-    threading.Thread(target=stop_handler, args=(thread_event, a), daemon=True).start()
+    threading.Thread(target=stop_handler, args=(a,), daemon=True).start()
     record_thread.join()
     a.close_stream()
 
     sys.exit(1)
-
-
-#
-# def main(path):
-#     a = Audio(path)
-#
-#     thread_event = threading.Event()
-#     record_thread = threading.Thread(target=record_audio, args=(thread_event, a), daemon=True)
-#     record_thread.start()
-#
-#     if input('Введите stop, чтобы остановить запись\n') == 'stop':
-#         thread_event.set()
-#         a.stop_recording()
-#     record_thread.join()
-#     a.close_stream()
 
 
 if __name__ == '__main__':
